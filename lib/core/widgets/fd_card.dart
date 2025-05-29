@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../data/models/fd_plan.dart';
+import '../../domain/models/fd_plan.dart';
 
 class FDCard extends StatelessWidget {
   final FDPlan fd;
@@ -22,8 +22,8 @@ class FDCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 4),
-            Text("Tenure: ${fd.tenure}"),
-            Text("Interest: ${fd.rate}", style: const TextStyle(color: Colors.green)),
+            Text("Tenure: ${fd.tenures}"),
+            Text("Interest: ${fd.name}", style: const TextStyle(color: Colors.green)),
             Text("Type: ${fd.type}"),
           ],
         ),

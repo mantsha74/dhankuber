@@ -6,108 +6,115 @@ class WelcomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const iconAssetPath = 'assets/images/your_icon.png'; // your custom icon
-    const title = "WELCOME TO FINOVA";
-    const headline = "Start investing in FDs\nwith returns that grow your wealth";
-    const subText = "Insured up to ₹5L as per government norms";
-    const termsNotice = "By proceeding, I agree to ";
-    const tnc = "Terms";
-    const privacy = "Privacy Policy";
-    const buttonLabel = "Get Started";
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final textTheme = theme.textTheme;
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: colorScheme.background,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Column(
             children: [
               const Spacer(),
+
+              /// Icon Container
               Center(
                 child: Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: Colors.black,
+                    color: colorScheme.primary,
                     borderRadius: BorderRadius.circular(16),
                   ),
-                  child:Icon(
+                  child: Icon(
                     Icons.account_balance,
-                    size: 48, // Correct way to control the size
-                    color: Colors.white,
+                    size: 48,
+                    color: colorScheme.onPrimary,
                   ),
-
-                  // child: Image.asset(
-                  //   iconAssetPath,
-                  //   height: 48,
-                  //   width: 48,
-                  //   color: Colors.white,
-                  // ),
                 ),
               ),
               const SizedBox(height: 32),
-              const Text(
-                title,
-                style: TextStyle(
-                  fontSize: 14,
+
+              /// Title
+              Text(
+                "WELCOME TO DHAN KUBER",
+                style: textTheme.labelLarge?.copyWith(
                   fontWeight: FontWeight.w600,
                   letterSpacing: 1.2,
-                  color: Colors.grey,
+                  color: theme.hintColor,
                 ),
               ),
               const SizedBox(height: 12),
-              const Text(
-                headline,
+
+              /// Headline
+              Text(
+                "Start investing in FDs\nwith returns that grow your wealth",
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 22,
+                style: textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.w700,
                   height: 1.4,
-                  color: Colors.black,
+                  color: colorScheme.onBackground,
                 ),
               ),
               const SizedBox(height: 12),
-              const Text(
-                subText,
+
+              /// Subtext
+              Text(
+                "Insured up to ₹5L as per government norms",
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey,
-                ),
+                style: textTheme.bodyMedium?.copyWith(color: theme.hintColor),
               ),
+
               const Spacer(),
-              const Text.rich(
+
+              /// Terms Text
+              Text.rich(
                 TextSpan(
-                  text: termsNotice,
+                  text: "By proceeding, I agree to ",
                   children: [
                     TextSpan(
-                      text: tnc,
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                      text: "Terms",
+                      style: textTheme.bodySmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: colorScheme.primary,
+                      ),
                     ),
-                    TextSpan(text: " & "),
+                    const TextSpan(text: " & "),
                     TextSpan(
-                      text: privacy,
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                      text: "Privacy Policy",
+                      style: textTheme.bodySmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: colorScheme.primary,
+                      ),
                     ),
                   ],
                 ),
-                style: TextStyle(fontSize: 12, color: Colors.black87),
+                style: textTheme.bodySmall?.copyWith(
+                  color: colorScheme.onBackground,
+                ),
                 textAlign: TextAlign.center,
               ),
+
               const SizedBox(height: 12),
+
+              /// Get Started Button
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () => context.go('/phone-auth'),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.black,
+                    backgroundColor: colorScheme.primary,
+                    foregroundColor: colorScheme.onPrimary,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child: const Text(buttonLabel, style: TextStyle(fontSize: 16)),
+                  child: const Text("Get Started", style: TextStyle(fontSize: 16)),
                 ),
               ),
+
               const SizedBox(height: 24),
             ],
           ),

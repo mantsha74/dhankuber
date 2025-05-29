@@ -25,7 +25,7 @@ class MyApp extends StatelessWidget {
     TextTheme textTheme = createTextTheme(context, "Lato", "Josefin Sans");
     final materialTheme = MaterialTheme(textTheme);
     return MaterialApp.router(
-      title: 'Flutter Demo',
+      title: 'Dhan Kuber',
       debugShowCheckedModeBanner: false,
       routerConfig: appRouter,
       theme: materialTheme.light(),

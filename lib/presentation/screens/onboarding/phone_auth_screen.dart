@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-
 import 'auth_viewmodel.dart';
 
 class PhoneAuthScreen extends ConsumerStatefulWidget {
@@ -18,26 +17,39 @@ class _PhoneAuthScreenState extends ConsumerState<PhoneAuthScreen> {
     final phone = _controller.text.trim();
     if (phone.length == 10) {
       ref.read(phoneAuthProvider.notifier).sendOtp(phone);
-      context.go('/otp',extra: "+91$phone");
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Please enter a valid number")),
+        const SnackBar(content: Text("Please enter a valid 10-digit number")),
       );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    const title = "What’s your mobile number?";
-    const subtitle = "Please enter your mobile number";
-    const helper = "Your mobile number is used to secure your investments";
-    const buttonText = "Verify mobile number";
-    const referralText = "Have a referral link?";
+    final authState = ref.watch(phoneAuthProvider);
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final textTheme = theme.textTheme;
+
+    //  Listen to verification state
+    ref.listen<AsyncValue<String>>(phoneAuthProvider, (prev, next) {
+      if (next is AsyncData && next.value?.isNotEmpty == true) {
+        final phone = _controller.text.trim();
+        context.go('/otp', extra: "+91$phone");
+      }
+
+      if (next is AsyncError) {
+        debugPrint(next.error.toString());
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(next.error.toString())),
+        );
+      }
+    });
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: colorScheme.background,
       appBar: AppBar(
-        leading: BackButton(color: Colors.black),
+        leading: BackButton(color: colorScheme.onBackground),
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
@@ -47,35 +59,32 @@ class _PhoneAuthScreenState extends ConsumerState<PhoneAuthScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 8),
-            const Text(
-              title,
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            Text(
+              "What’s your mobile number?",
+              style: textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
-            const Text(
-              subtitle,
-              style: TextStyle(fontSize: 14, color: Colors.grey),
+            Text(
+              "Please enter your mobile number",
+              style: textTheme.bodyMedium?.copyWith(color: theme.hintColor),
             ),
             const SizedBox(height: 24),
             Container(
               decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey.shade300),
+                border: Border.all(color: colorScheme.outline.withOpacity(0.2)),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
                 children: [
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 12),
-                    child: Text(
-                      "+91",
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                    ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    child: Text("+91", style: textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w600)),
                   ),
                   const VerticalDivider(width: 1),
                   Expanded(
                     child: TextField(
                       controller: _controller,
-                      keyboardType: TextInputType.number,
+                      keyboardType: TextInputType.phone,
                       decoration: const InputDecoration(
                         hintText: "Enter phone number",
                         border: InputBorder.none,
@@ -87,17 +96,20 @@ class _PhoneAuthScreenState extends ConsumerState<PhoneAuthScreen> {
               ),
             ),
             const SizedBox(height: 12),
-            const Text(
-              helper,
-              style: TextStyle(fontSize: 13, color: Colors.grey),
+            Text(
+              "Your mobile number is used to secure your investments",
+              style: textTheme.bodySmall?.copyWith(color: theme.hintColor),
             ),
             const Spacer(),
             Center(
               child: TextButton(
                 onPressed: () {},
-                child: const Text(
-                  referralText,
-                  style: TextStyle(decoration: TextDecoration.underline),
+                child: Text(
+                  "Have a referral link?",
+                  style: textTheme.bodyMedium?.copyWith(
+                    decoration: TextDecoration.underline,
+                    color: colorScheme.primary,
+                  ),
                 ),
               ),
             ),
@@ -105,17 +117,16 @@ class _PhoneAuthScreenState extends ConsumerState<PhoneAuthScreen> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: (){
-                 _onSubmit();
-                },
+                onPressed: authState is AsyncLoading ? null : _onSubmit,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.black,
+                  backgroundColor: colorScheme.primary,
+                  foregroundColor: colorScheme.onPrimary,
                   padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 ),
-                child: const Text(buttonText),
+                child: authState is AsyncLoading
+                    ? CircularProgressIndicator(color: colorScheme.onPrimary)
+                    : const Text("Verify mobile number"),
               ),
             ),
           ],

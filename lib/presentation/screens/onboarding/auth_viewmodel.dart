@@ -1,6 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import '../../../data/remote/firebase/auth_service.dart';
+
 final phoneAuthProvider = StateNotifierProvider<PhoneAuthViewModel, AsyncValue<String>>(
       (ref) => PhoneAuthViewModel(),
 );
@@ -44,5 +46,6 @@ class PhoneAuthViewModel extends StateNotifier<AsyncValue<String>> {
       smsCode: otp,
     );
     await FirebaseAuth.instance.signInWithCredential(credential);
+    createUserProfileIfNotExists();
   }
 }
